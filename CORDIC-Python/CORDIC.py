@@ -31,6 +31,15 @@ def hexadecimate_array(array):
         array[idx] = hex(elem)
     return array
 
+
+def convert_to_int(value):
+    """
+    Return integer value (very big value) of decimal portion
+    """
+    string_value = str(value)
+    split_value = string_value.split('.')
+    return int((split_value[1])[:9])
+
 #  ------------------------------------------
 #  ------------------CORDIC------------------
 #  ------------------------------------------
@@ -101,3 +110,6 @@ if __name__ == "__main__":
     print("CORDIC Sin:", cordic_sin)
     print("Actual Cos:", actual_cos)
     print("CORDIC Cos:", cordic_cos)
+
+    print(hexadecimate_array(generate_atans()))
+    print(hex(convert_to_int(K_value(32))))
