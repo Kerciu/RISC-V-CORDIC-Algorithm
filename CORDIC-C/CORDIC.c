@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <corecrt_math_defines.h>
+#include <math.h>
 
 #define K 0x26DD3B6A
 
@@ -15,11 +15,13 @@
 
 #define ACAN_SIZE 32
 
-int ACAN_TABLE[] = {0x3243f6a8, 0x1dac6705, 0xfadbafc, 0x7f56ea6,
-    0x3feab76, 0x1ffd55b, 0xfffaaa, 0x7fff55, 0x3fffea, 0x1ffffd,
-    0xfffff, 0x7ffff, 0x3ffff, 0x1ffff, 0xffff, 0x7fff, 0x3fff,
-    0x1fff, 0xfff, 0x7ff, 0x3ff, 0x1ff, 0xff, 0x7f, 0x3f, 0x1f,
-    0xf, 0x8, 0x4, 0x2, 0x1, 0x0};
+int ACAN_TABLE[]  = {
+	0x3243f6a8, 0x1dac6705, 0x0fadbafc, 0x07f56ea6, 0x03feab76,
+	0x01ffd55b, 0x00fffaaa, 0x007fff55, 0x003fffea, 0x001ffffd,
+	0x000fffff, 0x0007ffff, 0x0003ffff, 0x0001ffff, 0x0000ffff, 0x00007fff, 0x00003fff,
+	0x00001fff, 0x00000fff, 0x000007ff, 0x000003ff, 0x000001ff, 0x000000ff, 0x0000007f, 0x0000003f, 0x0000001f,
+	0x0000000f, 0x00000008, 0x00000004, 0x00000002, 0x00000001, 0x00000000,
+};
 // ------------------------------------------
 //            CORDIC ALGORITHM
 // ------------------------------------------
@@ -28,9 +30,10 @@ int* CORDIC(int theta_deg) {
     int x_point = K;
     int y_point = 0;
     int z = theta_deg;
+    int i;
 
     // Algorithm
-    for(int i = 0; i < ACAN_SIZE; ++i) {
+    for(i = 0; i < ACAN_SIZE; ++i) {
         int dx = y_point >> i;
         int dy = x_point >> i;
         int dz = ACAN_TABLE[i];
@@ -45,28 +48,28 @@ int* CORDIC(int theta_deg) {
             y_point += dy;
             z -= dz;
         }
+    }
 
     int* result = (int*)malloc(2 * sizeof(int));
-    // Memory allocation error
     if (result == NULL) {
         return NULL;
     }
+
     result[0] = x_point;
     result[1] = y_point;
-
     return result;
-    }
 }
+
 
 // ------------------------------------------
 //                    main
 // ------------------------------------------
 int main() {
     // Determine variables
-    double angle_deg = M_PI / 4;
-    double fixed_angle = angle_deg * SCALE;
+    double angle_deg = 3.14 / 4.0;
+    double scaled_angle = angle_deg * SCALE;
 
-    int* cordic_result = CORDIC(fixed_angle);
+    int* cordic_result = CORDIC(scaled_angle);
 
     if (cordic_result == NULL) {
         return -1;
@@ -79,7 +82,7 @@ int main() {
     // Print result
     printf("Sine: %d", sine, '\n');
     printf(" Cosine: %d", cosine);
-	
+
     free(cordic_result);
     return 0;
 }
