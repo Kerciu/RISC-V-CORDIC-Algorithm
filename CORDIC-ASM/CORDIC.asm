@@ -22,6 +22,13 @@ main:
 	mv t2, a0
 	ecall
 	
+	# Initialize registers
+	li t0, 0
+	li t1, 0
+	li t2, 0
+	li t3, 0
+	li t4, 0
+	
 	li t1, 0x80000000
 	bgt t0, t1, error
 	li t1, -0x80000000
@@ -56,7 +63,7 @@ else:
 
 increment_pointer:
 	addi t3, t3, 1
-	addi t4, t4, 1
+	addi t4, t4, 4
 	beq t3, s4, end
 	j acan_table_iteration
 
