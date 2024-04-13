@@ -4,13 +4,14 @@
 # Made by Kacper Górski
 # ------------------------------------------
 from math import atan, sin, cos, pi, sqrt
+from typing import List, Dict
 
 #  ------------------------------------------
 # ------------Auxiliary Functions------------
 #  ------------------------------------------
 
 
-def generate_atans():
+def generate_atans() -> List[int]:
     """
     Generate array of arc-tangent
     """
@@ -22,7 +23,7 @@ def generate_atans():
     return array
 
 
-def hexadecimate_array(array):
+def hexadecimate_array(array: List[int]) -> List[str]:
     """
     Return hex values of the arc-tangent array
     """
@@ -32,7 +33,7 @@ def hexadecimate_array(array):
     return array
 
 
-def convert_to_int(value):
+def convert_to_int(value: float) -> int:
     """
     Return integer value (very big value) of decimal portion
     """
@@ -45,7 +46,7 @@ def convert_to_int(value):
 #  ------------------------------------------
 
 
-def K_value(iterations):
+def K_value(iterations: int) -> float:
     """
     Determine scaling factor
     """
@@ -55,11 +56,12 @@ def K_value(iterations):
     return K
 
 
-def SCALE():
+def SCALE() -> int:
     return 2**30
 
 
-def CORDIC(theta_deg, ACAN_TABLE, iterations):
+def CORDIC(theta_deg: float, ACAN_TABLE: List[int],
+           iterations: int) -> Dict[str, int]:
     """
     Cordic Algorithm:
     Find cosine and sine through iterations
