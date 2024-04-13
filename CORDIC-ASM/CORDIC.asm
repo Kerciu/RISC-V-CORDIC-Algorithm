@@ -32,28 +32,29 @@ cordic:
 	# t2 			  Z : already initialized with angle
 	li t3, 1		# i
 	la t4, ACAN_TABLE	# ACAN_TABLE pointer
-	lw s4, ACAN_SIZE	# ACAN_SIZE
-
+	
 # for(i = 0; i < ACAN_SIZE; ++i)
 acan_table_iteration:
 	sra s0, t1, t3		# dX
 	sra s1, t0, t3		# dY
 	lw s2, (t4)		# dZ
+	
+	bgtz t2, else
 
 z_less_than_zero:
 	add t0, t0, s0		# x_point += dX 
 	sub t1, t1, s1		# y_point -= dY
 	add t2, t2, s2		# z += dZ
+	j increment_pointer
 	
-	addi t3, t3, 1
-	beq t3, s4, end
-	j acan_table_iteration
 else: 
 	sub t0, t0, s0		# x_point -= dX 
 	add t1, t1, s1		# y_point += dY
 	sub t2, t2, s2		# z -= dZ
-	
+
+increment_pointer:
 	addi t3, t3, 1
+	addi t4, t4, 1
 	beq t3, s4, end
 	j acan_table_iteration
 
