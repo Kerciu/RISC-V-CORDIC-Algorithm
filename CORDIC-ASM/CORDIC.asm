@@ -18,6 +18,7 @@ main:
 	la a0, prompt
 	ecall
 	
+	li t2, 0
 	li a7, 5
 	mv t2, a0
 	ecall
@@ -25,13 +26,13 @@ main:
 	# Initialize registers
 	li t0, 0
 	li t1, 0
-	li t2, 0
 	li t3, 0
 	li t4, 0
+	li t5, 0
 	
-	li t1, 0x80000000
+	li t1, 1048576
 	bgt t0, t1, error
-	li t1, -0x80000000
+	li t1, -1048576
 	blt t0, t1, error
 	xor t1, t1, t1
 	
@@ -41,6 +42,7 @@ cordic:
 	# t2 			  Z : already initialized with angle
 	li t3, 1		# i
 	la t4, ACAN_TABLE	# ACAN_TABLE pointer
+	li t5, ACAN_SIZE
 	
 # for(i = 0; i < ACAN_SIZE; ++i)
 acan_table_iteration:
@@ -64,8 +66,8 @@ else:
 increment_pointer:
 	addi t3, t3, 1
 	addi t4, t4, 4
-	beq t3, s4, end
-	j acan_table_iteration
+	blt t3, t5, acan_table_iteration
+	j end
 
 end:	
 	li a7, 4
