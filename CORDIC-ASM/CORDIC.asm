@@ -13,36 +13,26 @@ SCALE: .word 0x40000000		# 2^30 == 0x40000000 == 1073741824.0
 
 	.text
 	.global main
-main:
-	li a7, 4
+main:	
+	li a7, 4		# Load in prompt
 	la a0, prompt
 	ecall
 	
-	li t2, 0
-	li a7, 5
-	mv t2, a0
+	li a7, 5		# Take in user input
 	ecall
+	mv t2, a0		# Z
 	
-	# Initialize registers
-	li t0, 0
-	li t1, 0
-	li t3, 0
-	li t4, 0
-	li t5, 0
-	
-	li t1, 1048576
-	bgt t0, t1, error
-	li t1, -1048576
-	blt t0, t1, error
-	xor t1, t1, t1
+	li t0, 1685774663	# Pi/2 scaled by 2**30
+	bgt a0, t0, error
+	li t0, -1685774663
+	blt a0, t0, error
 	
 cordic:
 	lw t0, K		# X 
 	li t1, 0		# Y
-	# t2 			  Z : already initialized with angle
-	li t3, 1		# i
-	la t4, ACAN_TABLE	# ACAN_TABLE pointer
-	li t5, ACAN_SIZE
+	li t3, 0		# i
+	la t4, ACAN_TABLE	# Acan table pointer
+	li t5, ACAN_SIZE	# Acan size
 	
 # for(i = 0; i < ACAN_SIZE; ++i)
 acan_table_iteration:
@@ -50,15 +40,14 @@ acan_table_iteration:
 	sra s1, t0, t3		# dY
 	lw s2, (t4)		# dZ
 	
-	bgtz t2, else
+	bgtz t2, z_greater_than_zero
 
-z_less_than_zero:
 	add t0, t0, s0		# x_point += dX 
 	sub t1, t1, s1		# y_point -= dY
 	add t2, t2, s2		# z += dZ
 	j increment_pointer
 	
-else: 
+z_greater_than_zero:
 	sub t0, t0, s0		# x_point -= dX 
 	add t1, t1, s1		# y_point += dY
 	sub t2, t2, s2		# z -= dZ
@@ -66,8 +55,7 @@ else:
 increment_pointer:
 	addi t3, t3, 1
 	addi t4, t4, 4
-	blt t3, t5, acan_table_iteration
-	j end
+	bne t3, t5, acan_table_iteration
 
 end:	
 	li a7, 4
